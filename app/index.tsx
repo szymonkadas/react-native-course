@@ -1,4 +1,4 @@
-import {  Platform, ScrollView, TextInput, Pressable, Text, View, ActivityIndicator } from "react-native";
+import {  Platform, ScrollView, TextInput, Pressable, Text, View, ActivityIndicator, StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import COLORS, { ColorsTheme } from "@/constants/Colors";
 import createGetStylesFactory from "@/factories/createStylesheet";
@@ -107,6 +107,7 @@ export default function Index() {
         itemLayoutAnimation={LinearTransition}
         keyboardDismissMode={"on-drag"}
       />
+      <StatusBar barStyle={colorScheme === 'dark' ? 'dark-content' : 'light-content'} />
     </Container>
   );
 }

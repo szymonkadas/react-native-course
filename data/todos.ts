@@ -100,3 +100,5 @@ export const data = [
         "completed": false
     }
 ]
+
+export type TodoDataObject = typeof data[number];

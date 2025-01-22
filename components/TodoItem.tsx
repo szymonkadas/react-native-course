@@ -1,23 +1,24 @@
-import { View, Text, Appearance, Pressable } from 'react-native'
-import React from 'react'
+import { View, Text, Pressable } from 'react-native'
+import React, { useContext } from 'react'
 import createGetStylesFactory from '@/factories/createStylesheet'
-import COLORS, { ColorsTheme } from '@/constants/Colors'
 import { TodoDataObject } from '@/data/todos'
 import Ionicons from '@expo/vector-icons/Ionicons'
+import { ThemeContext } from '@/context/ThemeContext'
+import { ColorsTheme } from '@/constants/Colors'
 
-const TodoItem = ({item, index, toggleTodo, removeTodo} : {item: TodoDataObject, index: number, toggleTodo: (id: number) => void, removeTodo: (id: number) => void}) => {
-  const colorScheme = Appearance.getColorScheme() === 'dark' ? 'dark' : 'light';
+export function TodoItem({item, index, toggleTodo, removeTodo} : {item: TodoDataObject, index: number, toggleTodo: (id: number) => void, removeTodo: (id: number) => void}){
+  const {theme, colorScheme} = useContext(ThemeContext);
   const viewStyles = getViewStyles(colorScheme);
   const textStyles = getTextStyles(colorScheme);
   return (
     <View style={viewStyles.container}>
-        <Pressable style={viewStyles.actionButton} onPress={()=>toggleTodo(item.id)}>
-          <Ionicons style={viewStyles.actionButtonIcon} name={item.completed ? 'checkmark-circle-outline' : 'ellipse-outline'} size={32} color={COLORS[colorScheme].primary}/>
-        </Pressable>
-        <Text style={[textStyles.text, item.completed ? {textDecorationLine: 'line-through', color: 'gray'} : {}]}>{item.title}</Text>
-        <Pressable style={viewStyles.actionButton} onPress={()=>removeTodo(item.id)}>
-          <Ionicons name={'trash'} size={32} color={COLORS[colorScheme].error} selectable={undefined}/>
-        </Pressable>
+      <Pressable style={viewStyles.actionButton} onPress={()=>toggleTodo(item.id)}>
+        <Ionicons style={viewStyles.actionButtonIcon} name={item.completed ? 'checkmark-circle-outline' : 'ellipse-outline'} size={32} color={theme.primary}/>
+      </Pressable>
+      <Text style={[textStyles.text, item.completed ? {textDecorationLine: 'line-through', color: 'gray'} : {}]}>{item.title}</Text>
+      <Pressable style={viewStyles.actionButton} onPress={()=>removeTodo(item.id)}>
+        <Ionicons name={'trash'} size={32} color={theme.error} selectable={undefined}/>
+      </Pressable>
     </View>
   )
 }
@@ -52,6 +53,7 @@ const getTextStyles = createGetStylesFactory((themeStyles: ColorsTheme) => ({
   },
   text: {
     color: themeStyles.text,
-    fontSize: 14
+    fontSize: 14,
+    fontFamily: 'Inter_500Medium'
   }
 }))

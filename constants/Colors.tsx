@@ -5,7 +5,8 @@ const COLORS = {
         secondary: "#57b5b7",
         accent: "#1e2261",
         background: "#000",
-        error: '#ab000b'
+        error: '#ab000b',
+        placeholder: 'gray'
     },
     light: {
         text: '#0D1018',
@@ -13,7 +14,8 @@ const COLORS = {
         secondary: '#48A6A7',
         accent: '#9ACBD0',
         background: '#2973B2',
-        error: '#ab000b'
+        error: '#ab000b',
+        placeholder: 'gray'
     }
 }
 

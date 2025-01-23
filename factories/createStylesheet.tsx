@@ -14,10 +14,10 @@ export default function createGetStylesFactory<T extends NamedStyles<T>>(themati
   const colorScheme = Appearance.getColorScheme() || 'light';
   return (colorsScheme?: 'dark' | 'light') => {
     const themeStyles = COLORS[colorsScheme || colorScheme];
-    return StyleSheet.create(thematizeStyles(themeStyles));
+    return StyleSheet.create(thematizeStyles(themeStyles, colorsScheme || colorScheme));
   };
 }
 
-export type ThematizeStyles<T> = ((themeStyles: ColorsTheme) => T);
+export type ThematizeStyles<T> = ((themeStyles: ColorsTheme, colorScheme?: 'dark' | 'light') => T);
 
 type NamedStyles<T> = { [P in keyof T]: ViewStyle | TextStyle | ImageStyle };

@@ -7,19 +7,20 @@ import TodoItem from "@/components/TodoItem";
 import { useState, useContext, useEffect, useRef } from "react";
 import { Inter_500Medium, useFonts } from '@expo-google-fonts/inter';
 import { ThemeContext } from "@/context/ThemeContext";
-import Octicons from "@expo/vector-icons/Octicons";
 import Animated, {LinearTransition} from "react-native-reanimated";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import ColorSchemeToggle from "@/components/ColorSchemeToggle";
 
 export default function Index() {
   const [todos, setTodos] = useState(data.sort((a, b) => b.id - a.id));
   const [text, setText] = useState("");
   const [loaded, error] = useFonts({Inter_500Medium});
-  const {theme, colorScheme, setColorScheme} = useContext(ThemeContext);
-  const TodoStorageLoadingRef = useRef(false);
+  const {theme, colorScheme } = useContext(ThemeContext);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchTodos = async () => {
+      setLoading(true);
       try{
         const todos = await AsyncStorage.getItem('todoApp');
         if(todos && todos !== null) setTodos(JSON.parse(todos).sort((a: TodoDataObject,b: TodoDataObject)=>b.id - a.id));
@@ -27,6 +28,7 @@ export default function Index() {
       }catch(e){
         console.error(e);
       }
+      setLoading(false);
     }
 
     fetchTodos();
@@ -38,34 +40,33 @@ export default function Index() {
     if (text.trim()) {
       const newId = todos.length > 0 ? todos[0].id + 1 : 1;
       const newTodos = [{ id: newId, title: text, completed: false }, ...todos];
-      TodoStorageLoadingRef.current = true;
+      setLoading(true);
       AsyncStorage.setItem('todoApp', JSON.stringify(newTodos)).then(() => {
         setTodos(newTodos);
         setText("");
       }).finally(() => {
-        // so you can see activity indicator loading
-        setTimeout(()=>TodoStorageLoadingRef.current = false, 1000);
+        setLoading(false);
       });
     }
   };
   const removeTodo = (id: number) => {
     const newTodos = todos.filter(todo => todo.id !== id);
-    TodoStorageLoadingRef.current = true;
+    setLoading(true);
     AsyncStorage.setItem('todoApp', JSON.stringify(newTodos)).then(()=>{
       setTodos(newTodos);
     }).finally(() => {
-      TodoStorageLoadingRef.current = false;
+      setLoading(false);
     });
   };
   const toggleTodo = (id: number) => {
-    TodoStorageLoadingRef.current = true;
+    setLoading(true);
     const updatedTodos = todos.map(todo => 
       todo.id === id ? { ...todo, completed: !todo.completed } : todo
     );
     AsyncStorage.setItem('todoApp', JSON.stringify(updatedTodos)).then(() => {
       setTodos(updatedTodos);
     }).finally(() => {
-      TodoStorageLoadingRef.current = false;
+      setLoading(false);
     });
   }
 
@@ -78,7 +79,7 @@ export default function Index() {
   
   return (
     <Container
-      style={viewStyles.container}
+      contentContainerStyle={Platform.OS === 'web' ? {...viewStyles.container, paddingVertical: 16} : {}} style={Platform.OS === 'web' ? {} : viewStyles.container}
     >
       <View style={viewStyles.inputContainer}>
         <TextInput 
@@ -89,15 +90,9 @@ export default function Index() {
           placeholderTextColor={COLORS[colorScheme].placeholder}
         />
         <Pressable onPress={addTodo} style={viewStyles.button}>
-          {TodoStorageLoadingRef.current ? <ActivityIndicator color={theme.primary}/>: <Text style={textStyles.button}>Add</Text>}
+          {loading ? <ActivityIndicator color={theme.primary}/>: <Text style={textStyles.button}>Add</Text>}
         </Pressable>
-        <Pressable onPress={() => setColorScheme(colorScheme === 'dark' ? 'light' : 'dark')}>
-          {
-            colorScheme === 'dark' ? 
-            <Octicons name="moon" size={36} selectable={undefined} color={theme.text} style={{width: 36}}/> : 
-            <Octicons name="sun" size={36} selectable={undefined} color={theme.primary} style={{width: 36}}/>
-          }
-        </Pressable>
+        <ColorSchemeToggle />
       </View>
       <Animated.FlatList 
         contentContainerStyle={viewStyles.container}
@@ -114,16 +109,18 @@ export default function Index() {
 
 const getStyles = createGetStylesFactory((themeStyles: ColorsTheme) =>({
     container: {
-      justifyContent: "center",
+      justifyContent: "flex-start",
       gap: 16,
       backgroundColor: themeStyles.background,
-      paddingHorizontal: 8
+      paddingHorizontal: 8,
+      height: '100%'
     },
     inputContainer:{
       flexDirection: 'row',
       alignItems: 'center',
       gap: 16,
-      paddingHorizontal: 8
+      paddingHorizontal: 8,
+      // maxWidth: '100%'
     },
     input:{
       flexGrow: 1,
@@ -133,7 +130,9 @@ const getStyles = createGetStylesFactory((themeStyles: ColorsTheme) =>({
       borderRadius: 8,
       borderStyle: 'solid',
       borderWidth: 2,
-      borderColor: themeStyles.placeholder
+      borderColor: themeStyles.placeholder,
+      // maxWidth: '100%',
+      minWidth: 0
     },
     button: {
       width: 64,
@@ -148,7 +147,9 @@ const getStyles = createGetStylesFactory((themeStyles: ColorsTheme) =>({
 
 const getTextStyles = createGetStylesFactory((themeStyles: ColorsTheme) => ({
   button: {
-    fontSize: 18
+    fontSize: 18,
+    color: themeStyles.buttonContent,
+    fontWeight: 'bold'
   },
   input:{
     color: themeStyles.text,

@@ -6,7 +6,8 @@ const COLORS = {
         accent: "#1e2261",
         background: "#000",
         error: '#ab000b',
-        placeholder: 'gray'
+        placeholder: 'gray',
+        buttonContent: '#e8ebf3'
     },
     light: {
         text: '#0D1018',
@@ -15,7 +16,8 @@ const COLORS = {
         accent: '#9ACBD0',
         background: '#2973B2',
         error: '#ab000b',
-        placeholder: 'gray'
+        placeholder: 'gray',
+        buttonContent: '#F2EFE7'
     }
 }
 

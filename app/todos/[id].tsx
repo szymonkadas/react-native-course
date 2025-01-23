@@ -183,7 +183,7 @@ const getViewStyles = createGetStylesFactory((themeStyles: ColorsTheme) => ({
     },
     actionButtonIcon: {
         backgroundColor: themeStyles.secondary,
-        borderRadius: '100%'
+        borderRadius: 100
     },
     saveButton: {
         backgroundColor: themeStyles.secondary,
